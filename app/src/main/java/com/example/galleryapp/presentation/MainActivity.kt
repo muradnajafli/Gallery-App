@@ -9,13 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.galleryapp.R
 import com.example.galleryapp.data.InternetChecker
+import com.example.galleryapp.data.di.App
 import com.example.galleryapp.data.loadImageWithPicasso
 import com.example.galleryapp.databinding.ActivityMainBinding
+import javax.inject.Inject
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -23,21 +24,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainAdapter: MainAdapter
     private lateinit var overlayView: View
 
-    private val internetChecker by lazy {
-        InternetChecker(this)
-    }
-    private val viewModel: MainViewModel by viewModels()
+    @Inject lateinit var viewModel: MainViewModel
+    @Inject lateinit var internetChecker: InternetChecker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        (application as App).appComponent.inject(this)
+
         setUpRecyclerView()
         fetchImageData()
         observeEvents()
         swipeRefresh()
-
     }
 
     private fun swipeRefresh() {
